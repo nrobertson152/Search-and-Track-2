@@ -1,0 +1,57 @@
+name: Linux AppImage
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  appimage:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install compiler and AppImage prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libx11-dev librsvg2-bin wget file
+      - name: Compile and verify simulation
+        run: |
+          make clean
+          make -j2
+          make test
+          make smoke
+      - name: Generate application icon
+        run: |
+          mkdir -p build
+          rsvg-convert -w 256 -h 256 assets/search-and-track-2.svg -o build/search-and-track-2.png
+      - name: Install linuxdeploy
+        run: |
+          wget --https-only --tries=3 --timeout=30 \
+            -O linuxdeploy-x86_64.AppImage \
+            https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          chmod +x linuxdeploy-x86_64.AppImage
+      - name: Package executable as AppImage
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: '1'
+          OUTPUT: Search-and-Track-2-x86_64.AppImage
+        run: |
+          ./linuxdeploy-x86_64.AppImage \
+            --appdir AppDir \
+            --executable build/search-and-track-2 \
+            --desktop-file packaging/search-and-track-2.desktop \
+            --icon-file build/search-and-track-2.png \
+            --output appimage
+          test -s Search-and-Track-2-x86_64.AppImage
+          chmod +x Search-and-Track-2-x86_64.AppImage
+          ./Search-and-Track-2-x86_64.AppImage --smoke
+      - name: Upload downloadable AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: Search-and-Track-2-AppImage-x86_64
+          path: Search-and-Track-2-x86_64.AppImage
+          if-no-files-found: error
+          retention-days: 30
