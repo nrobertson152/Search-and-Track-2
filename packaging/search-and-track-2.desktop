@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Search and Track 2
+GenericName=Cold War Air Defense Simulator
+Comment=Command a Cold War air defense network
+Exec=search-and-track-2
+Icon=search-and-track-2
+Terminal=false
+Categories=Game;Simulation;
+Keywords=radar;air defense;simulation;NORAD;PVO;
