@@ -123,7 +123,7 @@ static int scope_radius(void){return min_i(mw()-62,mh()-100)/2;}
 static void draw_ppi(void){int x=mx(),y=my()+31,w=mw(),h=mh()-31;box(x,y,w,h,CL_SEA);int cx=scope_center_x(),cy=scope_center_y(),rad=scope_radius();dot(cx,cy,rad,CL_LAND);
  for(int j=1;j<=4;j++){int r=rad*j/4;oval(cx,cy,r,CL_GRID);label(cx+6,cy-r+14,0,CL_MUTED,"%d",(int)(radar_range()*j/4));}
  line(cx-rad,cy,cx+rad,cy,CL_GRID);line(cx,cy-rad,cx,cy+rad,CL_GRID);for(int a=0;a<360;a+=30){float angle=a*(float)PI/180;int sx=cx+(int)(sinf(angle)*rad),sy=cy-(int)(cosf(angle)*rad);label(sx-9,sy+4,0,CL_DIM,"%03d",a);}
- SatRadar *r=&A.g.radars[A.g.selected_radar];if(r->active){for(int k=0;k<9;k++){float d=(r->sweep-(float)k*2.2f)*PI/180.f;int len=rad-(int)(k*1.5f);line(cx,cy,cx+(int)(cosf(d)*len),cy+(int)(sinf(d)*len),k==0?CL_GREEN:CL_GRID);}}
+ SatRadar *r=&A.g.radars[A.g.selected_radar];if(r->active){for(int k=0;k<9;k++){float d=(r->sweep-(float)k*2.2f)*PI/180.f;int len=rad-(int)(k*1.5f);line(cx,cy,cx+(int)(sinf(d)*len),cy-(int)(cosf(d)*len),k==0?CL_GREEN:CL_GRID);}}
  dot(cx,cy,4,CL_GREEN);
  float scale=(float)rad/radar_range();for(int i=0;i<SAT_TARGETS;i++){SatTarget *t=&A.g.targets[i];if(!game_valid(i))continue;float dx=t->estx-r->x,dy=t->esty-r->y;float d=hypotf(dx,dy);if(d>radar_range())continue;int px=cx+(int)(dx*scale),py=cy+(int)(dy*scale),c=target_col(t);
  dot(px,py,i==A.g.selected_track?7:4,c);if(i==A.g.selected_track)oval(px,py,13,CL_WHITE);label(px+11,py-7,0,c,"%s",t->callsign);}
