@@ -1,0 +1,28 @@
+name: Native Linux build and smoke test
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install X11 development dependencies
+        run: sudo apt-get update && sudo apt-get install -y libx11-dev
+      - name: Compile and run headless tests
+        run: |
+          make
+          make test
+          make smoke
+      - name: Test CMake build
+        run: |
+          cmake -S . -B build-cmake -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-cmake --parallel
+          ctest --test-dir build-cmake --output-on-failure
+      - name: Upload native game executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: Search-and-Track-2-linux-x86_64
+          path: build/search-and-track-2
+          if-no-files-found: error
