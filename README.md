@@ -6,6 +6,17 @@
 
 **Independent project:** This game was developed independently of the original *Search and Track*. It uses no Godot or full game engine. Artwork consists of procedural shapes and text rendered with the native X11 library. It contains no third-party game assets or redistributed system fonts.
 
+## AppImage (Linux)
+
+Open the [GitHub Actions workflow runs](https://github.com/nrobertson152/Search-and-Track-2/actions/workflows/appimage.yml), select the latest successful **Linux AppImage** run, and download the `Search-and-Track-2-AppImage-x86_64` artifact. Unzip it, then run:
+
+```sh
+chmod +x Search-and-Track-2-x86_64.AppImage
+./Search-and-Track-2-x86_64.AppImage
+```
+
+This is an offline native X11 application. Linux Mint on x86-64 is the primary target. You do not need to build from source to use the AppImage. The file is attached to the CI run (GitHub login may be required).
+
 ## Play
 
 Requires Linux with X11/XWayland, a C17 compiler, `make`, and the X11 development package. On Linux Mint / Ubuntu:
@@ -85,3 +96,7 @@ ctest --test-dir build --output-on-failure
 ## License
 
 GPL-3.0-or-later; see [LICENSE](LICENSE) in the repository.
+
+## Command-center presentation
+
+The interface uses a Cold War equipment-inspired visual treatment: recessed CRT screens, phosphor radar sweeps, bronze/olive instrument housings, annunciator lamps, and separate American/Soviet command identification. It is rendered directly through X11 without a full game engine. See [visual design](docs/VISUAL_DESIGN.md).
