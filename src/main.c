@@ -109,7 +109,13 @@ static void draw_targets_map(void){for(int i=0;i<SAT_TARGETS;i++){SatTarget *t=&
  int uncertainty=(int)((1.f-t->quality)*22);if(uncertainty>5)oval(x,y,uncertainty,CL_GRID);
  XPoint p[4]={{(short)x,(short)(y-7)},{(short)(x+7),(short)y},{(short)x,(short)(y+7)},{(short)(x-7),(short)y}};poly(p,4,c);label(x+10,y-10,0,c,"%s",t->callsign);line(x,y,x+(int)(t->estvx*85),y+(int)(t->estvy*85),c);
 }}
-static void draw_tactical(void){draw_map_grid();draw_radar_sites(-1);draw_fighters();draw_targets_map();headline("TACTICAL AIR PICTURE","MULTI-SENSOR / PLOT CONFIDENCE / INTERCEPT TRACKING");}
+static void draw_tactical(void){
+ XRectangle clip={(short)mx(),(short)(my()+31),(unsigned short)mw(),(unsigned short)(mh()-31)};
+ XSetClipRectangles(A.d,A.gc,0,0,&clip,1,Unsorted);
+ draw_map_grid();draw_radar_sites(-1);draw_fighters();draw_targets_map();
+ XSetClipMask(A.d,A.gc,None);
+ headline("TACTICAL AIR PICTURE","MULTI-SENSOR / PLOT CONFIDENCE / INTERCEPT TRACKING");
+}
 static float radar_range(void){return A.zoom==0?160:A.zoom==1?300:520;}
 static int scope_center_x(void){return mx()+mw()/2;}
 static int scope_center_y(void){return my()+31+(mh()-31)/2;}
@@ -177,7 +183,8 @@ static void render_game(void){draw_frame();switch(A.page){case 0:draw_tactical()
 static void draw_menu(void){box(0,0,A.width,A.height,CL_BG);int cx=A.width/2,cy=A.height/2;for(int r=65;r<370;r+=55)oval(cx,cy,r,CL_GRID);line(cx-380,cy,cx+380,cy,CL_GRID);line(cx,cy-380,cx,cy+380,CL_GRID);float ph=A.render_t*.25f;for(int i=0;i<12;i++){float an=ph+i*2*PI/12;dot(cx+(int)(cosf(an)*(80+i*20)),cy+(int)(sinf(an)*(80+i*20)),i%3==0?4:2,CL_GREEN);}
  box(0,0,A.width,80,CL_SURFACE);box(0,0,6,80,CL_GREEN);txt(34,37,2,CL_WHITE,"SEARCH / TRACK 2");txt(35,62,0,CL_DIM,"COLD WAR AIR DEFENSE COMMAND  |  NATIVE C17 / LINUX");
  panel(cx-355,cy-225,710,445,"SELECT OPERATIONAL COMMAND");txt(cx-324,cy-154,2,CL_WHITE,"YOUR WATCH BEGINS");txt(cx-323,cy-120,0,CL_DIM,"Monitor the sector. Identify unknown contacts. Scramble interceptors.");txt(cx-323,cy-99,0,CL_DIM,"Protect civilian lives. Preserve the integrity of the defense network.");
- int yy=cy-58;button(cx-323,yy,311,135,"UNITED STATES / NORAD",CL_CYAN,A.menu_faction==SAT_USA);button(cx+11,yy,311,135,"SOVIET UNION / PVO",CL_RED,A.menu_faction==SAT_USSR);
+ int yy=cy-58;button(cx-323,yy,311,135,"",CL_CYAN,A.menu_faction==SAT_USA);button(cx+11,yy,311,135,"",CL_RED,A.menu_faction==SAT_USSR);
+ txt(cx-305,yy+28,1,CL_CYAN,"UNITED STATES / NORAD");txt(cx+30,yy+28,1,CL_RED,"SOVIET UNION / PVO");
  txt(cx-305,yy+52,0,CL_DIM,"NORTH ATLANTIC DEFENSE");txt(cx+30,yy+52,0,CL_DIM,"BARENTS DEFENSE DISTRICT");txt(cx-305,yy+78,0,CL_TEXT,"F-106A  /  F-4E");txt(cx+30,yy+78,0,CL_TEXT,"Su-15TM  /  MiG-21");txt(cx-305,yy+104,0,CL_DIM,"5 RADARS  /  3 SAM BATTERIES");txt(cx+30,yy+104,0,CL_DIM,"5 RADARS  /  3 SAM BATTERIES");
  button(cx-323,cy+111,645,56,"ENTER  /  ASSUME COMMAND",CL_GREEN,1);
  txt(cx-321,cy+194,0,CL_DIM,"KEYS: A = USA / B = USSR / ENTER = DEPLOY / L = RESTORE SAVE");
