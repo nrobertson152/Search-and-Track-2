@@ -11,7 +11,7 @@ static float clampf(float v,float lo,float hi){return v<lo?lo:v>hi?hi:v;}
 static uint32_t roll(SatGame *g){uint32_t x=g->rng;x^=x<<13;x^=x>>17;x^=x<<5;return g->rng=x?x:0x68a5f1bdU;}
 static float randf(SatGame *g){return (roll(g)>>8)*(1.0f/16777216.0f);}
 float sat_distance(float x,float y,float a,float b){return hypotf(x-a,y-b);}
-float sat_heading(float vx,float vy){float a=atan2f(vy,vx)*180.f/PI;return a<0?a+360:a;}
+float sat_heading(float vx,float vy){float a=atan2f(vx,-vy)*180.f/PI;return a<0?a+360:a;}
 const char *sat_type_name(int t){static const char *types[]={"CIVILIAN","BOMBER","RECON","DECOY","ESCORT"};return t>=0&&t<5?types[t]:"UNKNOWN";}
 void sat_event(SatGame *g,int level,const char *fmt,...){SatEvent *e=&g->events[g->next_event];va_list args;va_start(args,fmt);vsnprintf(e->text,sizeof e->text,fmt,args);va_end(args);e->at=g->time;e->level=level;g->next_event=(g->next_event+1)%SAT_EVENTS;if(g->event_count<SAT_EVENTS)g->event_count++;}
 static void create_target(SatGame *g,int type,int near){
